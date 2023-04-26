@@ -1,5 +1,7 @@
 # zenstruck/memoize
 
+[![CI](https://github.com/zenstruck/memoize/actions/workflows/ci.yml/badge.svg)](https://github.com/zenstruck/memoize/actions/workflows/ci.yml)
+
 Helper trait to efficiently cache expensive methods in memory.
 
 ## Installation
