@@ -1,6 +1,7 @@
 # zenstruck/memoize
 
 [![CI](https://github.com/zenstruck/memoize/actions/workflows/ci.yml/badge.svg)](https://github.com/zenstruck/memoize/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/zenstruck/memoize/branch/1.x/graph/badge.svg?token=ZQPY6GSxvt)](https://codecov.io/gh/zenstruck/memoize)
 
 Helper trait to efficiently cache expensive methods in memory.
 
