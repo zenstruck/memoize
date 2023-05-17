@@ -24,17 +24,25 @@ class MyObject
 
     public function method1(): mixed
     {
+        // cache key defaults to the method name "method1"
         return $this->memoize(
-            __FUNCTION__, // memoize requires a "cache key" an easy choice is the function name
             fn() => $this->someExpensiveOperation() // called only the first time method1() is called
         );
     }
 
-    public function method2(string $parameter): mixed
+    public function method2(): mixed
     {
         return $this->memoize(
-            __FUNCTION__.$parameter, // cache key includes the parameter
+            fn() => $this->someExpensiveOperation(),
+            'my_custom_cache_key' // explicitly set the cache key
+        );
+    }
+
+    public function method3(string $parameter): mixed
+    {
+        return $this->memoize(
             fn() => $this->someExpensiveOperation($parameter) // called once per unique parameter
+            'my_custom_cache_key'.$parameter, // cache key includes the parameter
         )
     }
 

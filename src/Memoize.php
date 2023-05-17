@@ -25,8 +25,16 @@ trait Memoize
      *
      * @return T
      */
-    protected function memoize(string $key, callable $factory): mixed
+    protected function memoize(callable $factory, ?string $key = null): mixed
     {
+        if (null === $key) {
+            $key = \debug_backtrace(options: \DEBUG_BACKTRACE_IGNORE_ARGS, limit: 2)[1]['function'] ?? null;
+        }
+
+        if (!$key) {
+            throw new \LogicException('Could not automatically determine memoize key. Pass the key explicitly.');
+        }
+
         return Cache::getInstance()->get($this, $key, $factory);
     }
 

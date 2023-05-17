@@ -27,16 +27,16 @@ final class MemoizeTest extends TestCase
         $object = new DummyObject();
         $factory = new Factory(static fn() => \random_int(1, 100000));
 
-        $initial = $object->memoize('key1', $factory);
+        $initial = $object->memoize($factory, 'key1');
 
         $this->assertSame(1, $factory->calls);
         $this->assertIsInt($initial);
-        $this->assertSame($initial, $object->memoize('key1', $factory));
-        $this->assertSame($initial, $object->memoize('key1', $factory));
-        $this->assertSame($initial, $object->memoize('key1', $factory));
+        $this->assertSame($initial, $object->memoize($factory, 'key1'));
+        $this->assertSame($initial, $object->memoize($factory, 'key1'));
+        $this->assertSame($initial, $object->memoize($factory, 'key1'));
         $this->assertSame(1, $factory->calls);
-        $this->assertNotSame($initial, $new = $object->memoize('key2', $factory));
-        $this->assertSame($new, $object->memoize('key2', $factory));
+        $this->assertNotSame($initial, $new = $object->memoize($factory, 'key2'));
+        $this->assertSame($new, $object->memoize($factory, 'key2'));
         $this->assertSame(2, $factory->calls);
     }
 
@@ -48,10 +48,10 @@ final class MemoizeTest extends TestCase
         $object = new DummyObject();
         $factory = new Factory(static fn() => null);
 
-        $this->assertNull($object->memoize('key', $factory));
-        $this->assertNull($object->memoize('key', $factory));
-        $this->assertNull($object->memoize('key', $factory));
-        $this->assertNull($object->memoize('key', $factory));
+        $this->assertNull($object->memoize($factory, 'key'));
+        $this->assertNull($object->memoize($factory, 'key'));
+        $this->assertNull($object->memoize($factory, 'key'));
+        $this->assertNull($object->memoize($factory, 'key'));
         $this->assertSame(1, $factory->calls);
     }
 
@@ -63,13 +63,13 @@ final class MemoizeTest extends TestCase
         $object = new DummyObject();
         $factory = new Factory(static fn() => \random_int(1, 100000));
 
-        $initial1 = $object->memoize('key1', $factory);
-        $initial2 = $object->memoize('key2', $factory);
+        $initial1 = $object->memoize($factory, 'key1');
+        $initial2 = $object->memoize($factory, 'key2');
 
         $object->clearMemoized('key1');
 
-        $this->assertNotSame($initial1, $object->memoize('key1', $factory));
-        $this->assertSame($initial2, $object->memoize('key2', $factory));
+        $this->assertNotSame($initial1, $object->memoize($factory, 'key1'));
+        $this->assertSame($initial2, $object->memoize($factory, 'key2'));
     }
 
     /**
@@ -80,14 +80,28 @@ final class MemoizeTest extends TestCase
         $object = new DummyObject();
         $factory = new Factory(static fn() => \random_int(1, 100000));
 
-        $initial1 = $object->memoize('key1', $factory);
-        $initial2 = $object->memoize('key2', $factory);
+        $initial1 = $object->memoize($factory, 'key1');
+        $initial2 = $object->memoize($factory, 'key2');
 
         $object->clearMemoized();
         $object->clearMemoized(); // call twice to ensure "nothing happens" when clearing an unset object
 
-        $this->assertNotSame($initial1, $object->memoize('key1', $factory));
-        $this->assertNotSame($initial2, $object->memoize('key2', $factory));
+        $this->assertNotSame($initial1, $object->memoize($factory, 'key1'));
+        $this->assertNotSame($initial2, $object->memoize($factory, 'key2'));
+    }
+
+    /**
+     * @test
+     */
+    public function can_memoize_without_key(): void
+    {
+        $object = new DummyObject();
+
+        $value = $object->memoizeSomething();
+
+        $this->assertSame($value, $object->memoizeSomething());
+        $this->assertSame($value, $object->memoizeSomething());
+        $this->assertSame($value, $object->memoizeSomething());
     }
 }
 
@@ -112,5 +126,10 @@ class DummyObject
     use Memoize {
         memoize as public;
         clearMemoized as public;
+    }
+
+    public function memoizeSomething(): int
+    {
+        return $this->memoize(static fn() => \random_int(1, 100000));
     }
 }
