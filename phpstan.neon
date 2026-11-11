@@ -1,6 +1,7 @@
 parameters:
     level: 8
     treatPhpDocTypesAsCertain: false
+    rememberPossiblyImpureFunctionValues: false
     paths:
         - src
         - tests
